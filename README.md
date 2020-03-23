@@ -7,7 +7,7 @@ For now, this is very initial version of the plugin. I will add some configurabl
 
 # Installation
 
-Just place .dll file into you Plugin folders.
+Just place .dll file in your Plugin folder.
 
 # Configs
 
