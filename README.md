@@ -1,7 +1,8 @@
 # Major Scientist
 
 MajorScientist(o) is a SCP:SL Plugin. It requires [EXILED] to work.
-It adds 'Major Scientist' to the game. Every round, all D-classes and Scientists(or only Scientists) have a chance to spawn as a Major Scientist. Major Scientist starts with better items and SCP-207 effects. But there is a penalty - if a major scientist dies, the MTF can't win. It will only make draw or SCP win or D-class win.
+
+Adds 'Major Scientist' to the game. Every round, all Scientists(or Class-Ds) have a chance to spawn as a Major Scientist. Major Scientist starts with better items and SCP-207 effects. But there is a penalty - if a major scientist dies, the MTF can't win. It will only make draw or SCP win or D-class win.
 
 For now, this is very initial version of the plugin. I will add some configurable options to it in future.
 
