@@ -68,6 +68,7 @@ namespace MajorScientist
 			{
 				KillMajorScientist();
 				MajorEscape = -1;
+				RoundSummary.escaped_scientists = 0;
 
 				if (Configs.log)
 				{
@@ -160,8 +161,8 @@ namespace MajorScientist
 				{
 					KillMajorScientist();
 					MajorEscape = -1;
+					RoundSummary.escaped_scientists = 0;
 
-					
 					if (Configs.log)
 						if(MajorEscape == -1)
 							Log.Info("It seems Major Scientist has died for sure. -Setclass");
@@ -177,6 +178,7 @@ namespace MajorScientist
 			{
 				KillMajorScientist();
 				MajorEscape = -1;
+				RoundSummary.escaped_scientists = 0;
 
 				if (Configs.log)
 				{
@@ -193,6 +195,7 @@ namespace MajorScientist
 			{
 				KillMajorScientist();
 				MajorEscape = -1;
+				RoundSummary.escaped_scientists = 0;
 
 				if (Configs.log)
 				{
@@ -209,6 +212,7 @@ namespace MajorScientist
 			{
 				KillMajorScientist();
 				MajorEscape = -1;
+				RoundSummary.escaped_scientists = 0;
 
 				if (Configs.log)
 				{
