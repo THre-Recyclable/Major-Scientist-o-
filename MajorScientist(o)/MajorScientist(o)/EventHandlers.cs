@@ -16,7 +16,6 @@ namespace MajorScientist
 		internal static ReferenceHub MajorScientist;
 		private static bool isHidden;
 		private static bool hasTag;
-		private bool isRoundStarted;
 		private static int maxHP;
 		private int MajorEscape = 0;
 		private const float dur = 327;
@@ -32,7 +31,6 @@ namespace MajorScientist
 
 		public void OnRoundStart()
 		{
-			isRoundStarted = true;
 			MajorScientist = null;
 			MajorEscape = 0;
 			RoundEnds = 100;
@@ -44,7 +42,6 @@ namespace MajorScientist
 
 		public void OnRoundEnd()
 		{
-			isRoundStarted = false;
 
 			Timing.KillCoroutines(coroutines);
 			coroutines.Clear();
@@ -52,8 +49,6 @@ namespace MajorScientist
 
 		public void OnRoundRestart()
 		{
-			
-			isRoundStarted = false;
 
 			Timing.KillCoroutines(coroutines);
 			coroutines.Clear();
