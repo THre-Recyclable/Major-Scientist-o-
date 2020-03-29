@@ -54,15 +54,15 @@ namespace MajorScientist
 
 
 				if (Configs.dsreplace)
-					MS.Broadcast($"You have been replaced with <color=\"yellow\"><b>MAJOR SCIENTIST</b></color>!\nIf you die, MTF can't win. Gotta run fast!", 10);
+					MS.Broadcast(Configs.replacestring, 10);
 				else
-					MS.Broadcast($"<size=60>You are <color=\"yellow\"><b>MAJOR SCIENTIST</b></color>!<size>\n</size>If you die, MTF can't win. Gotta run fast!", 10);
+					MS.Broadcast(Configs.spawnmsstring, 10);
 
 				hasTag = !string.IsNullOrEmpty(MS.serverRoles.NetworkMyText);
 				isHidden = !string.IsNullOrEmpty(MS.serverRoles.HiddenBadge);
 				if (isHidden) MS.RefreshTag();
-				Timing.CallDelayed(0.5f, () => MS.SetRank("Major Scientist", "yellow"));
-				Timing.CallDelayed(0.5f, () => MS.ammoBox.Networkamount = "150:150:150");
+				Timing.CallDelayed(0.5f, () => MS.SetRank(Configs.badge, "yellow"));
+				Timing.CallDelayed(0.5f, () => MS.ammoBox.Networkamount = Configs.ammobox);
 
 				MajorScientist = MS;
 
@@ -94,7 +94,8 @@ namespace MajorScientist
 					SpawnMS(pList[rand.Next(pList.Count)]);
 				}
 
-				Timing.CallDelayed(0.5f, () => MajorScientist.effectsController.EnableEffect("SCP-207"));
+				if(Configs.usescp207)
+					Timing.CallDelayed(0.5f, () => MajorScientist.effectsController.EnableEffect("SCP-207"));
 
 				if (Configs.log)
 					Log.Info("Major Scientist has spawned.");

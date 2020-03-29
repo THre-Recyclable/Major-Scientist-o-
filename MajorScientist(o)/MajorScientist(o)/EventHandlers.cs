@@ -22,8 +22,6 @@ namespace MajorScientist
 		private const float dur = 327;
 		private static System.Random rand = new System.Random();
 		private static int RoundEnds;
-		private static int AlternativeEnds;
-		internal static ReferenceHub MiscMember;
 
 		private static List<CoroutineHandle> coroutines = new List<CoroutineHandle>();
 
@@ -37,7 +35,6 @@ namespace MajorScientist
 			isRoundStarted = true;
 			MajorScientist = null;
 			MajorEscape = 0;
-			AlternativeEnds = 0;
 			RoundEnds = 100;
 
 			Timing.CallDelayed(1f, () => selectspawnMS());
@@ -68,7 +65,9 @@ namespace MajorScientist
 			{
 				KillMajorScientist();
 				MajorEscape = -1;
-				RoundSummary.escaped_scientists = 0;
+				if (Configs.msvip)
+					RoundSummary.escaped_scientists = 0;
+				
 
 				if (Configs.log)
 				{
@@ -85,17 +84,20 @@ namespace MajorScientist
 			List<Team> EpList = Player.GetHubs().Where(x => x.queryProcessor.PlayerId != MajorScientist?.queryProcessor.PlayerId).Select(x => Player.GetTeam(x)).ToList();
 			List<ReferenceHub> EpmList = Player.GetHubs().Where(x => x.characterClassManager.UserId != null && x.characterClassManager.UserId != string.Empty).ToList();
 			// 수석 과학자가 죽으면 MTF는 승리하지 못한다.
-			
-			// 수석 과학자가 살아 있다면 게임이 계속된다.
-			// MTF 기준으로 게임이 이상하게 끝나는 경우 -> 과학자가 탈출하지 못한 상태에서 죄수, 카오스, SCP, 뱀의 손이 모두 죽었을 경우, 남은 과학자도 없는데 수석 과학자만 있는 경우
-			if (((MajorScientist != null)) && (!EpList.Contains(Team.CDP)) && (!EpList.Contains(Team.SCP)) && (!EpList.Contains(Team.CHI)) && (!EpList.Contains(Team.TUT)) && (!EpList.Contains(Team.RSC)))
+
+			if (Configs.roundcontinue)
 			{
-				ev.Allow = false;
-			}
-			//위의 경우랑 같지만 다른 과학자도 살아있는 경우.
-			else if (((MajorScientist != null)) && (!EpList.Contains(Team.CDP)) && (!EpList.Contains(Team.SCP)) && (!EpList.Contains(Team.CHI)) && (!EpList.Contains(Team.TUT)) && (EpList.Contains(Team.RSC)))
-			{
-				ev.Allow = false;
+				// 수석 과학자가 살아 있다면 게임이 계속된다.
+				// MTF 기준으로 게임이 이상하게 끝나는 경우 -> 과학자가 탈출하지 못한 상태에서 죄수, 카오스, SCP, 뱀의 손이 모두 죽었을 경우, 남은 과학자도 없는데 수석 과학자만 있는 경우
+				if (((MajorScientist != null)) && (!EpList.Contains(Team.CDP)) && (!EpList.Contains(Team.SCP)) && (!EpList.Contains(Team.CHI)) && (!EpList.Contains(Team.TUT)) && (!EpList.Contains(Team.RSC)))
+				{
+					ev.Allow = false;
+				}
+				//위의 경우랑 같지만 다른 과학자도 살아있는 경우.
+				else if (((MajorScientist != null)) && (!EpList.Contains(Team.CDP)) && (!EpList.Contains(Team.SCP)) && (!EpList.Contains(Team.CHI)) && (!EpList.Contains(Team.TUT)) && (EpList.Contains(Team.RSC)))
+				{
+					ev.Allow = false;
+				}
 			}
 
 
@@ -115,37 +117,40 @@ namespace MajorScientist
 					Log.Info("Major Scientist has escaped.");
 			}
 
-			if (ev.Player.queryProcessor.PlayerId != MajorScientist?.queryProcessor.PlayerId)
+			if (ev.Player.queryProcessor.PlayerId != MajorScientist?.queryProcessor.PlayerId) //yeah I know, there are too many ifs
 			{
-				if(MajorEscape == -1)
+				if (Configs.msvip)
 				{
-					if (ev.Player.GetRole() == RoleType.Scientist)
+					if (MajorEscape == -1)
 					{
-						if (ev.Player.IsHandCuffed() == false)
+						if (ev.Player.GetRole() == RoleType.Scientist)
 						{
-							ev.Allow = false;
-							ev.Player.ChangeRole(RoleType.NtfScientist);
-							ev.Player.inventory.AddNewItem(ItemType.KeycardNTFLieutenant);
-							ev.Player.inventory.AddNewItem(ItemType.GrenadeFrag);
-							ev.Player.inventory.AddNewItem(ItemType.Medkit);
-							ev.Player.inventory.AddNewItem(ItemType.Radio);
-							ev.Player.inventory.AddNewItem(ItemType.WeaponManagerTablet);
+							if (ev.Player.IsHandCuffed() == false)
+							{
+								ev.Allow = false;
+								ev.Player.ChangeRole(RoleType.NtfScientist);
+								ev.Player.inventory.AddNewItem(ItemType.KeycardNTFLieutenant);
+								ev.Player.inventory.AddNewItem(ItemType.GrenadeFrag);
+								ev.Player.inventory.AddNewItem(ItemType.Medkit);
+								ev.Player.inventory.AddNewItem(ItemType.Radio);
+								ev.Player.inventory.AddNewItem(ItemType.WeaponManagerTablet);
+							}
 						}
-					}
 
-					else if (ev.Player.GetRole() == RoleType.ClassD)
-					{
-						if (ev.Player.IsHandCuffed() == true)
+						else if (ev.Player.GetRole() == RoleType.ClassD)
 						{
-							ev.Allow = false;
-							ev.Player.ChangeRole(RoleType.NtfCadet);
-							ev.Player.inventory.AddNewItem(ItemType.KeycardSeniorGuard);
-							ev.Player.inventory.AddNewItem(ItemType.Disarmer);
-							ev.Player.inventory.AddNewItem(ItemType.GunProject90);
-							ev.Player.inventory.AddNewItem(ItemType.Medkit);
-							ev.Player.inventory.AddNewItem(ItemType.Radio);
-							ev.Player.inventory.AddNewItem(ItemType.WeaponManagerTablet);
+							if (ev.Player.IsHandCuffed() == true)
+							{
+								ev.Allow = false;
+								ev.Player.ChangeRole(RoleType.NtfCadet);
+								ev.Player.inventory.AddNewItem(ItemType.KeycardSeniorGuard);
+								ev.Player.inventory.AddNewItem(ItemType.Disarmer);
+								ev.Player.inventory.AddNewItem(ItemType.GunProject90);
+								ev.Player.inventory.AddNewItem(ItemType.Medkit);
+								ev.Player.inventory.AddNewItem(ItemType.Radio);
+								ev.Player.inventory.AddNewItem(ItemType.WeaponManagerTablet);
 
+							}
 						}
 					}
 				}
@@ -161,7 +166,8 @@ namespace MajorScientist
 				{
 					KillMajorScientist();
 					MajorEscape = -1;
-					RoundSummary.escaped_scientists = 0;
+					if(Configs.msvip)
+						RoundSummary.escaped_scientists = 0;
 
 					if (Configs.log)
 						if(MajorEscape == -1)
@@ -178,7 +184,8 @@ namespace MajorScientist
 			{
 				KillMajorScientist();
 				MajorEscape = -1;
-				RoundSummary.escaped_scientists = 0;
+				if (Configs.msvip)
+					RoundSummary.escaped_scientists = 0;
 
 				if (Configs.log)
 				{
@@ -195,7 +202,8 @@ namespace MajorScientist
 			{
 				KillMajorScientist();
 				MajorEscape = -1;
-				RoundSummary.escaped_scientists = 0;
+				if (Configs.msvip)
+					RoundSummary.escaped_scientists = 0;
 
 				if (Configs.log)
 				{
@@ -212,7 +220,8 @@ namespace MajorScientist
 			{
 				KillMajorScientist();
 				MajorEscape = -1;
-				RoundSummary.escaped_scientists = 0;
+				if (Configs.msvip)
+					RoundSummary.escaped_scientists = 0;
 
 				if (Configs.log)
 				{

@@ -19,7 +19,7 @@ namespace MajorScientist
 			if (!enabled) return;
 
 			harmonyCounter++;
-			harmonyInstance = HarmonyInstance.Create($"THre.Major Scientist{harmonyCounter}");
+			harmonyInstance = HarmonyInstance.Create($"THre.MajorScientist{harmonyCounter}");
 			harmonyInstance.PatchAll();
 
 			EventHandlers = new EventHandlers(this);
@@ -59,6 +59,6 @@ namespace MajorScientist
 
 		public override void OnReload() { }
 
-		public override string getName { get; } = "Major Scientist";
+		public override string getName { get; } = "MajorScientist";
 	}
 }
