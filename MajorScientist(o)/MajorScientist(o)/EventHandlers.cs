@@ -35,8 +35,8 @@ namespace MajorScientist
 			MajorEscape = 0;
 			RoundEnds = 100;
 
-			Timing.CallDelayed(1f, () => selectspawnMS());
-
+			if(rand.Next(1,101) <= Configs.spawnchance)
+				Timing.CallDelayed(1f, () => selectspawnMS());
 
 		}
 
@@ -94,7 +94,6 @@ namespace MajorScientist
 					ev.Allow = false;
 				}
 			}
-
 
 		}
 

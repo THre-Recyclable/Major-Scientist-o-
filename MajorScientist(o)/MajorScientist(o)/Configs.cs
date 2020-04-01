@@ -12,11 +12,14 @@ namespace MajorScientist
 		internal static bool usescp207; // true: ms uses scp 207 from the start
 		internal static bool roundcontinue; // true: Round doesnt end when ms is alive
 		internal static bool msvip; // true: MTF cant win if ms dies
+		internal static bool usedeathmessage; // true: displays string if ms dies
+
 
 		internal static string replacestring; // dsreplace string
 		internal static string spawnmsstring; // string will be displayed when ms spawns
 		internal static string badge; // badge string
 		internal static string ammobox; // ammo: it should be int:int:int.
+		internal static string deathmessage;
 
 		internal static void ReloadConfig()
 		{
@@ -32,6 +35,9 @@ namespace MajorScientist
 			Configs.roundcontinue = Plugin.Config.GetBool("ms_round_continue", true);
 			Configs.ammobox = Plugin.Config.GetString("ms_ammo_box", "150:150:150");
 			Configs.msvip = Plugin.Config.GetBool("ms_vip", true);
+
+			Configs.usedeathmessage = Plugin.Config.GetBool("ms_use_dm", false);
+			Configs.deathmessage = Plugin.Config.GetString("ms_death_message", $"<color=\"yellow\"Major scientist</color>has died.");
 
 
 			if (Configs.spawnitems == null || Configs.spawnitems.Count == 0)
