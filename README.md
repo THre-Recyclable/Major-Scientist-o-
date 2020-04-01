@@ -28,7 +28,8 @@ Just place .dll file in your Plugin folder.
 | ms_badge | String | Major Scientist | Name of badge. |
 | ms_replace_string | String |  | String will be displayed when some class-D is replaced with major scientist. It has default value, but you can customize it too. You can use <color="yellow"></color>, etc. |
 | ms_spawn_string | String |  | String will be displayed when someone spawn as a major scientist. It has default value, but you can customize it too. You can use <color="yellow"></color>, etc. |
-
+| ms_use_dm | Bool | false | String will be displayed to every player when a major scientist dies. |
+| ms_death_message | String |  | This string will be displayed when ms_use_dm is set to true. It has default value, but you can customize it too. You can use <color="yellow"></color>, etc. |
 
 
 
