@@ -37,7 +37,7 @@ namespace MajorScientist
 			Configs.msvip = Plugin.Config.GetBool("ms_vip", true);
 
 			Configs.usedeathmessage = Plugin.Config.GetBool("ms_use_dm", false);
-			Configs.deathmessage = Plugin.Config.GetString("ms_death_message", $"<color=\"yellow\"Major scientist</color>has died.");
+			Configs.deathmessage = Plugin.Config.GetString("ms_death_message", $"<color=\"yellow\"Major scientist</color>has died.\n From now <b>MTF can't win the round.</b>");
 
 
 			if (Configs.spawnitems == null || Configs.spawnitems.Count == 0)

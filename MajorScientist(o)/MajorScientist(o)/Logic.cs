@@ -27,7 +27,7 @@ namespace MajorScientist
 				MajorScientist = null;
 
 				if(Configs.usedeathmessage)
-					Map.Broadcast("<color=\"yellow\"수석 과학자</color>가 사망하였습니다.\n <b>특무대 승리가 무효 처리되었습니다.</b>", 10);
+					Map.Broadcast(Configs.deathmessage, 10);
 			}
 		}
 
