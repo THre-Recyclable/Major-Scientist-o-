@@ -2,14 +2,18 @@
 
 MajorScientist(o) is a SCP:SL Plugin. It requires [EXILED] to work.
 
-Adds 'Major Scientist' to the game. Every round, all Scientists(or Class-Ds) have a chance to spawn as a Major Scientist. Major Scientist starts with better items and SCP-207 effects. What's more, if the major scientist is alive, round doesn't end! No more escape failure because of the extermination of scps. But there is a penalty - if the major scientist dies, the MTF can't win. It will only make draw or SCP win or D-class win.
-Also when you spawn as a major scientist, you will have a badge named 'Major Scientist'.
+Adds 'Major Scientist' to the game. Every round, all Scientists(or Class-Ds) have a chance to spawn as a Major Scientist. Major Scientist starts with better items and SCP-207 effects. What's more, <b>if the major scientist is alive, round doesn't end!</b> No more escape failure because of the extermination of scps. But there is a penalty - <b>if the major scientist dies, the MTF can't win. It will only make draw or SCP win or D-class win.</b> But if you want to, you can adjust these features too.
+Also when you spawn as a major scientist, you will have a badge named 'Major Scientist' by default.
 
-For now, this is very initial version of the plugin. I will add some configurable options to it in future.
+It supports <b>dynapic updates.</b>
 
 # Installation
 
 Just place .dll file in your Plugin folder.
+
+# For 'reloadplugins'
+
+Although it supports dynamic update from v1.4, there's something you should mind before typing <b?'reloadplugins'</b> in RA or console. First, of course, if you were using the versions like 1.3.1, you can't use dynamic updates. And if you use <b>'reloadplugins'</b> while the round is proceeding, you will lose some informations for end message because the contents of strings will be gone while reloading plugins.
 
 # Configs
 
