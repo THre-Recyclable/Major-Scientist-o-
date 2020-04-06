@@ -13,7 +13,7 @@ Just place .dll file in your Plugin folder.
 
 # For 'reloadplugins'
 
-Although it supports dynamic update from v1.4, there's something you should mind before typing <b>'reloadplugins'</b> in RA or console. First, of course, if you were using the versions like 1.3.1, you can't use dynamic updates. And if you use <b>'reloadplugins'</b> while the round is proceeding, you will lose some informations for end message because the contents of strings will be gone while reloading plugins.
+Although it supports dynamic update from v1.4, there's something you should mind before typing <b>'reloadplugins'</b> in RA or console. First, of course, if you were using the versions like 1.3.1, you can't use dynamic updates. And if you use <b>'reloadplugins'</b> while the round is proceeding, you will lose some informations for end message because the contents of strings will be gone while reloading plugins. To avoid that, use 'reloadplugins' while round is <b>NOT</b> proceeding like end of the round, etc.
 
 # Configs
 
