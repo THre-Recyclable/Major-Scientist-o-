@@ -7,8 +7,8 @@ namespace MajorScientist.Harmony
 	{
 		private static bool Prefix(CharacterClassManager __instance)
 		{
-			bool a = Plugin.GetPlayer(__instance.gameObject).queryProcessor.PlayerId == EventHandlers.MajorScientist?.queryProcessor.PlayerId;
-			if (a) __instance.TargetConsolePrint(__instance.connectionToClient, "Hey what are you doing?", "green");
+			bool a = Plugin.GetPlayer(__instance.gameObject).queryProcessor.PlayerId == EventHandlers.ms?.queryProcessor.PlayerId;
+			if (a) __instance.TargetConsolePrint(__instance.connectionToClient, "No.", "green");
 			return !a;
 		}
 	}

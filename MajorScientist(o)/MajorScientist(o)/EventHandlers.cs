@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System;
 using EXILED;
 using EXILED.Extensions;
 using MEC;
@@ -12,17 +13,19 @@ namespace MajorScientist
 	{
 		public Plugin plugin;
 		public EventHandlers(Plugin plugin) => this.plugin = plugin;
+		public static bool MSalive = true;
 
-		internal static ReferenceHub MajorScientist;
-		private static bool isHidden;
-		private static bool hasTag;
-		private static int maxHP;
-		private int MajorEscape = 0;
-		private const float dur = 327;
 		private static System.Random rand = new System.Random();
-		private static int RoundEnds;
 
-		private static List<CoroutineHandle> coroutines = new List<CoroutineHandle>();
+		internal static ReferenceHub ms;
+		private List<ReferenceHub> mslist;
+
+		private static string scpnamestring;
+		private static string killerstring;
+		public static string escaperstring;
+
+		/* In EventHandlers, selects a random player and adds him component.
+		  Also, code for end message is written here. */
 
 		public void OnWaitingForPlayers()
 		{
@@ -31,205 +34,104 @@ namespace MajorScientist
 
 		public void OnRoundStart()
 		{
-			MajorScientist = null;
-			MajorEscape = 0;
-			RoundEnds = 100;
+			ms = null;
+			scpnamestring = null;
+			killerstring = null;
+			escaperstring = null;
 
-			if(rand.Next(1,101) <= Configs.spawnchance)
-				Timing.CallDelayed(1f, () => selectspawnMS());
+            if (rand.Next(1, 101) <= Configs.spawnchance)
+            {
+                if (!Configs.dsreplace) //if only scientist are selected to be ms
+                    Timing.CallDelayed(0.4f, () => mslist = Player.GetHubs().Where(x => x.GetTeam() == Team.RSC && x.characterClassManager.UserId != null && x.characterClassManager.UserId != string.Empty).ToList());
+                else //if only class-ds are selected to be ms
+					Timing.CallDelayed(0.4f, () => mslist = Player.GetHubs().Where(x => x.GetTeam() == Team.CDP && x.characterClassManager.UserId != null && x.characterClassManager.UserId != string.Empty).ToList());
+                Timing.CallDelayed(0.6f, () => ms = mslist[rand.Next(mslist.Count)]);
+                Timing.CallDelayed(0.8f, () => ms.ChangeRole(RoleType.Scientist));
+                Timing.CallDelayed(1.0f, () => ms.gameObject.AddComponent<MSComponent>());
+            }
 
+            
 		}
 
 		public void OnRoundEnd()
 		{
+			if (scpnamestring == null) scpnamestring = "None ";
+			if (killerstring == null) killerstring = "None ";
+			if (escaperstring == null) escaperstring = "None ";
 
-			Timing.KillCoroutines(coroutines);
-			coroutines.Clear();
+			Timing.CallDelayed(0.3f, () => Map.Broadcast($"<size=30>[ <color=\"red\">SCP</color>: {scpnamestring}] [ <color=\"cyan\">SCP Killer</color>:{killerstring}]</size>\n<size=25>[ <color=\"orange\">Escaped</color>: {escaperstring} ]</size>", 15));
 		}
 
-		public void OnRoundRestart()
+		public void OnSetClass(SetClassEvent ev) // get scp's roles except 0492
 		{
-
-			Timing.KillCoroutines(coroutines);
-			coroutines.Clear();
+			if (ev.Player.GetTeam() == Team.SCP && ev.Player.GetRole() != RoleType.Scp0492)
+				nameset(ev.Player, ref scpnamestring);
 		}
 
-		public void OnPlayerDie(ref PlayerDeathEvent ev)
+		public void OnCheckEscape(ref CheckEscapeEvent ev) //(while msvip is true) if ms has died, escaping is replaced with just changing roles. It won't increase escaped scientists count.
 		{
-			if (ev.Player.queryProcessor.PlayerId == MajorScientist?.queryProcessor.PlayerId)
+			if (Configs.endmessage)
+				escaperstring += $"{ev.Player.GetNickname()} ";
+
+			if (MSalive == false && Configs.msvip)
 			{
-				KillMajorScientist();
-				MajorEscape = -1;
-				if (Configs.msvip)
-					RoundSummary.escaped_scientists = 0;
-				
-
-				if (Configs.log)
-				{
-					if (MajorEscape == -1)
-						Log.Info("yeah, it seems to work well. - PlayerDie");
-				}
-
-
-			}
-		}
-
-		public void OnCheckRoundEnd(ref CheckRoundEndEvent ev)
-		{
-			List<Team> EpList = Player.GetHubs().Where(x => x.queryProcessor.PlayerId != MajorScientist?.queryProcessor.PlayerId).Select(x => Player.GetTeam(x)).ToList();
-			List<ReferenceHub> EpmList = Player.GetHubs().Where(x => x.characterClassManager.UserId != null && x.characterClassManager.UserId != string.Empty).ToList();
-			// 수석 과학자가 죽으면 MTF는 승리하지 못한다.
-
-			if (Configs.roundcontinue)
-			{
-				// 수석 과학자가 살아 있다면 게임이 계속된다.
-				// MTF 기준으로 게임이 이상하게 끝나는 경우 -> 과학자가 탈출하지 못한 상태에서 죄수, 카오스, SCP, 뱀의 손이 모두 죽었을 경우, 남은 과학자도 없는데 수석 과학자만 있는 경우
-				if (((MajorScientist != null)) && (!EpList.Contains(Team.CDP)) && (!EpList.Contains(Team.SCP)) && (!EpList.Contains(Team.CHI)) && (!EpList.Contains(Team.TUT)) && (!EpList.Contains(Team.RSC)))
+				if (ev.Player.GetRole() == RoleType.Scientist && ev.Player.IsHandCuffed() == false)
 				{
 					ev.Allow = false;
+					ev.Player.ChangeRole(RoleType.NtfScientist);
+					List<int> SCitems = new List<int>() { 7, 12, 14, 19, 20, 25 };
+					for (int i = 0; i < SCitems.Count; i++)
+						ev.Player.inventory.AddNewItem((ItemType)SCitems[i]);
 				}
-				//위의 경우랑 같지만 다른 과학자도 살아있는 경우.
-				else if (((MajorScientist != null)) && (!EpList.Contains(Team.CDP)) && (!EpList.Contains(Team.SCP)) && (!EpList.Contains(Team.CHI)) && (!EpList.Contains(Team.TUT)) && (EpList.Contains(Team.RSC)))
+				else if (ev.Player.GetRole() == RoleType.ClassD && ev.Player.IsHandCuffed() == true)
 				{
 					ev.Allow = false;
-				}
-			}
-
-		}
-
-		public void OnCheckEscape(ref CheckEscapeEvent ev)
-		{
-			if (ev.Player.queryProcessor.PlayerId == MajorScientist?.queryProcessor.PlayerId)
-			{
-				MajorScientist.SetRank("", "default");
-				if (hasTag) MajorScientist.RefreshTag();
-				if (isHidden) MajorScientist.HideTag();
-				MajorScientist = null;
-				MajorEscape = 1;
-
-				if (Configs.log)
-					Log.Info("Major Scientist has escaped.");
-			}
-
-			if (ev.Player.queryProcessor.PlayerId != MajorScientist?.queryProcessor.PlayerId) //yeah I know, there are too many ifs
-			{
-				if (Configs.msvip)
-				{
-					if (MajorEscape == -1)
-					{
-						if (ev.Player.GetRole() == RoleType.Scientist)
-						{
-							if (ev.Player.IsHandCuffed() == false)
-							{
-								ev.Allow = false;
-								ev.Player.ChangeRole(RoleType.NtfScientist);
-								ev.Player.inventory.AddNewItem(ItemType.KeycardNTFLieutenant);
-								ev.Player.inventory.AddNewItem(ItemType.GrenadeFrag);
-								ev.Player.inventory.AddNewItem(ItemType.Medkit);
-								ev.Player.inventory.AddNewItem(ItemType.Radio);
-								ev.Player.inventory.AddNewItem(ItemType.WeaponManagerTablet);
-							}
-						}
-
-						else if (ev.Player.GetRole() == RoleType.ClassD)
-						{
-							if (ev.Player.IsHandCuffed() == true)
-							{
-								ev.Allow = false;
-								ev.Player.ChangeRole(RoleType.NtfCadet);
-								ev.Player.inventory.AddNewItem(ItemType.KeycardSeniorGuard);
-								ev.Player.inventory.AddNewItem(ItemType.Disarmer);
-								ev.Player.inventory.AddNewItem(ItemType.GunProject90);
-								ev.Player.inventory.AddNewItem(ItemType.Medkit);
-								ev.Player.inventory.AddNewItem(ItemType.Radio);
-								ev.Player.inventory.AddNewItem(ItemType.WeaponManagerTablet);
-
-							}
-						}
-					}
+					ev.Player.ChangeRole(RoleType.NtfCadet);
+					List<int> CDitems = new List<int>() { 5, 12, 14, 19, 21, 26 };
+					for (int i = 0; i < CDitems.Count; i++)
+						ev.Player.inventory.AddNewItem((ItemType)CDitems[i]);
 				}
 			}
 		}
 
-		public void OnSetClass(SetClassEvent ev)
+		public void OnPlayerDie(ref PlayerDeathEvent ev) //when scp dies, write killer's nickname in the string
 		{
-			Timing.CallDelayed(1f, () => RoundEnds++);
-			if (ev.Player.queryProcessor.PlayerId == MajorScientist?.queryProcessor.PlayerId)
-			{
-				if((MajorScientist.GetRole() == RoleType.Spectator))
-				{
-					KillMajorScientist();
-					MajorEscape = -1;
-					if(Configs.msvip)
-						RoundSummary.escaped_scientists = 0;
-
-					if (Configs.log)
-						if(MajorEscape == -1)
-							Log.Info("It seems Major Scientist has died for sure. -Setclass");
-				}
-
-				
-			}
+			if (ev.Player.GetTeam() == Team.SCP && ev.Player.GetRole() != RoleType.Scp0492 && ev.Player.GetRole() != RoleType.Scp079 && ev.Killer != null && Configs.endmessage)
+				killerstring += $"{ev.Killer.GetNickname()} ";
 		}
 
-		public void OnPlayerLeave(PlayerLeaveEvent ev)
+
+		public static IEnumerator<float> DelayAction(float delay, Action x)
 		{
-			if (ev.Player.queryProcessor.PlayerId == MajorScientist?.queryProcessor.PlayerId)
-			{
-				KillMajorScientist();
-				MajorEscape = -1;
-				if (Configs.msvip)
-					RoundSummary.escaped_scientists = 0;
-
-				if (Configs.log)
-				{
-					if (MajorEscape == -1)
-						Log.Info("yeah, it seems to work well. - PlayerLeave");
-				}
-			}
-
+			yield return Timing.WaitForSeconds(delay);
+			x();
 		}
 
-		public void OnContain106(Scp106ContainEvent ev)
+		public static void nameset(ReferenceHub scpplayer, ref string scpnamestring) //make merged string according to the SCP's role
 		{
-			if (ev.Player.queryProcessor.PlayerId == MajorScientist?.queryProcessor.PlayerId)
+			switch (scpplayer.GetRole())
 			{
-				KillMajorScientist();
-				MajorEscape = -1;
-				if (Configs.msvip)
-					RoundSummary.escaped_scientists = 0;
-
-				if (Configs.log)
-				{
-					if (MajorEscape == -1)
-						Log.Info("yeah, it seems to work well. - Contain106");
-				}
-
-			}
-		}
-
-		public void OnPocketDimensionDie(PocketDimDeathEvent ev)
-		{
-			if (ev.Player.queryProcessor.PlayerId == MajorScientist?.queryProcessor.PlayerId)
-			{
-				KillMajorScientist();
-				MajorEscape = -1;
-				if (Configs.msvip)
-					RoundSummary.escaped_scientists = 0;
-
-				if (Configs.log)
-				{
-					if (MajorEscape == -1)
-						Log.Info("yeah, it seems to work well. -  PocketDimesionDie");
-				}
-			}
-		}
-
-		public void OnUseMedicalItem(MedicalItemEvent ev)
-		{
-			if (ev.Player.queryProcessor.PlayerId == MajorScientist?.queryProcessor.PlayerId)
-			{
-				MajorScientist.playerStats.maxHP = Configs.health;
+				case RoleType.Scp049:
+					scpnamestring += "SCP-049 ";
+					break;
+				case RoleType.Scp079:
+					scpnamestring += "SCP-079 ";
+					break;
+				case RoleType.Scp096:
+					scpnamestring += "SCP-096 ";
+					break;
+				case RoleType.Scp106:
+					scpnamestring += "SCP-106 ";
+					break;
+				case RoleType.Scp173:
+					scpnamestring += "SCP-173 ";
+					break;
+				case RoleType.Scp93953:
+					scpnamestring += "SCP-939-53 ";
+					break;
+				case RoleType.Scp93989:
+					scpnamestring += "SCP-939-89 ";
+					break;
 			}
 		}
 	}

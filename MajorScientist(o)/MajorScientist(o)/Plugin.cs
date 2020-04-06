@@ -1,5 +1,10 @@
-﻿using EXILED;
+﻿using System.Linq;
+using System.Collections.Generic;
+using EXILED;
 using Harmony;
+using System;
+using EXILED.Extensions;
+using MEC;
 
 namespace MajorScientist
 {
@@ -24,19 +29,15 @@ namespace MajorScientist
 
 			EventHandlers = new EventHandlers(this);
 
-			// Register events
-			Events.WaitingForPlayersEvent += EventHandlers.OnWaitingForPlayers;
-			Events.RoundStartEvent += EventHandlers.OnRoundStart;
-			Events.RoundEndEvent += EventHandlers.OnRoundEnd;
-			Events.RoundRestartEvent += EventHandlers.OnRoundRestart;
-			Events.PlayerDeathEvent += EventHandlers.OnPlayerDie;
-			Events.CheckRoundEndEvent += EventHandlers.OnCheckRoundEnd;
+
+            // Register events - for EventHandlers
+            Events.WaitingForPlayersEvent += EventHandlers.OnWaitingForPlayers;
+            Events.RoundStartEvent += EventHandlers.OnRoundStart;
+            Events.RoundEndEvent += EventHandlers.OnRoundEnd;
+            Events.PlayerDeathEvent += EventHandlers.OnPlayerDie;
 			Events.CheckEscapeEvent += EventHandlers.OnCheckEscape;
 			Events.SetClassEvent += EventHandlers.OnSetClass;
-			Events.PlayerLeaveEvent += EventHandlers.OnPlayerLeave;
-			Events.Scp106ContainEvent += EventHandlers.OnContain106;
-			Events.PocketDimDeathEvent += EventHandlers.OnPocketDimensionDie;
-			Events.UseMedicalItemEvent += EventHandlers.OnUseMedicalItem;
+
 		}
 
 		public override void OnDisable()
@@ -46,14 +47,10 @@ namespace MajorScientist
 			Events.RoundStartEvent -= EventHandlers.OnRoundStart;
 			Events.RoundEndEvent -= EventHandlers.OnRoundEnd;
 			Events.PlayerDeathEvent -= EventHandlers.OnPlayerDie;
-			Events.CheckRoundEndEvent -= EventHandlers.OnCheckRoundEnd;
 			Events.CheckEscapeEvent -= EventHandlers.OnCheckEscape;
 			Events.SetClassEvent -= EventHandlers.OnSetClass;
-			Events.PlayerLeaveEvent -= EventHandlers.OnPlayerLeave;
-			Events.Scp106ContainEvent -= EventHandlers.OnContain106;
-			Events.PocketDimDeathEvent -= EventHandlers.OnPocketDimensionDie;
-			Events.UseMedicalItemEvent -= EventHandlers.OnUseMedicalItem;
 
+			harmonyInstance.UnpatchAll();
 			EventHandlers = null;
 		}
 

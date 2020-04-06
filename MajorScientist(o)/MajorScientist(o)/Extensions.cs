@@ -1,5 +1,7 @@
-﻿using MEC;
+﻿using System.Collections.Generic;
+using MEC;
 using UnityEngine;
+using System;
 
 namespace MajorScientist
 {
@@ -43,10 +45,21 @@ namespace MajorScientist
 			player.serverRoles.RefreshHiddenTag();
 		}
 
+		public static void RemoveBadge(ReferenceHub ms)
+		{
+			bool hasTag = !string.IsNullOrEmpty(ms.serverRoles.NetworkMyText);
+			bool isHidden = !string.IsNullOrEmpty(ms.serverRoles.HiddenBadge);
+
+			ms.SetRank("", "default");
+			if (hasTag) ms.RefreshTag();
+			if (isHidden) ms.HideTag();
+		}
+
 		public static void Broadcast(this ReferenceHub player, string message, uint time, bool monospaced = false)
 		{
 			player.GetComponent<Broadcast>().TargetAddElement(player.scp079PlayerScript.connectionToClient, message, time, monospaced);
 		}
+
 
 	}
 }
