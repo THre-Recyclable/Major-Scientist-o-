@@ -18,7 +18,7 @@ namespace MajorScientist
 		private static System.Random rand = new System.Random();
 
 		internal static ReferenceHub ms;
-		private List<ReferenceHub> mslist;
+		private static List<ReferenceHub> mslist;
 
 		private static string scpnamestring;
 		private static string killerstring;
@@ -35,20 +35,23 @@ namespace MajorScientist
 		public void OnRoundStart()
 		{
 			ms = null;
+
+			Log.Info("Test1");
+
 			scpnamestring = null;
 			killerstring = null;
 			escaperstring = null;
 
-            if (rand.Next(1, 101) <= Configs.spawnchance)
-            {
-                if (!Configs.dsreplace) //if only scientist are selected to be ms
-                    Timing.CallDelayed(0.4f, () => mslist = Player.GetHubs().Where(x => x.GetTeam() == Team.RSC && x.characterClassManager.UserId != null && x.characterClassManager.UserId != string.Empty).ToList());
-                else //if only class-ds are selected to be ms
-					Timing.CallDelayed(0.4f, () => mslist = Player.GetHubs().Where(x => x.GetTeam() == Team.CDP && x.characterClassManager.UserId != null && x.characterClassManager.UserId != string.Empty).ToList());
-                Timing.CallDelayed(0.6f, () => ms = mslist[rand.Next(mslist.Count)]);
-                Timing.CallDelayed(0.8f, () => ms.ChangeRole(RoleType.Scientist));
-                Timing.CallDelayed(1.0f, () => ms.gameObject.AddComponent<MSComponent>());
-            }
+			if (rand.Next(1, 101) <= Configs.spawnchance)
+			{
+				if (!Configs.dsreplace)
+					Timing.CallDelayed(0.4f, () => mslist = GetHubList(RoleType.Scientist));
+				else
+					Timing.CallDelayed(0.4f, () => mslist = GetHubList(RoleType.ClassD));
+				Timing.CallDelayed(0.6f, () => ms = mslist[rand.Next(mslist.Count)]);
+				Timing.CallDelayed(0.8f, () => ms.ChangeRole(RoleType.Scientist));
+				Timing.CallDelayed(1.0f, () => ms.gameObject.AddComponent<MSComponent>());
+			}
 
             
 		}
@@ -60,11 +63,14 @@ namespace MajorScientist
 			if (escaperstring == null) escaperstring = "None ";
 
 			Timing.CallDelayed(0.3f, () => Map.Broadcast($"<size=30>[ <color=\"red\">SCP</color>: {scpnamestring}] [ <color=\"cyan\">SCP Killer</color>:{killerstring}]</size>\n<size=25>[ <color=\"orange\">Escaped</color>: {escaperstring} ]</size>", 15));
+			mslist = null;
 		}
 
-		public void OnSetClass(SetClassEvent ev) // get scp's roles except 0492
+		public void OnSetClass(SetClassEvent ev) 
 		{
-			if (ev.Player.GetTeam() == Team.SCP && ev.Player.GetRole() != RoleType.Scp0492)
+			
+
+			if (ev.Player.GetTeam() == Team.SCP && ev.Player.GetRole() != RoleType.Scp0492) // get scp's roles except 0492
 				nameset(ev.Player, ref scpnamestring);
 		}
 
@@ -133,6 +139,17 @@ namespace MajorScientist
 					scpnamestring += "SCP-939-89 ";
 					break;
 			}
+		}
+
+		public static List<ReferenceHub> GetHubList(RoleType role)
+		{
+			List<ReferenceHub> mslist = new List<ReferenceHub>();
+			foreach (ReferenceHub player in Player.GetHubs())
+			{
+				if (player.GetRole() == role)
+					mslist.Add(player);
+			}
+			return mslist;
 		}
 	}
 }

@@ -21,11 +21,15 @@ namespace MajorScientist //Many thanks to iopietro!
 		{
             ms = this.gameObject.GetPlayer();
             EventHandlers.MSalive = true;
+            pList = null;
             HookEvents();
         }
 
         void Start()
         {
+            if (ms == null)
+                return;
+
             SpawnMS(ms);
         }
 
@@ -44,16 +48,17 @@ namespace MajorScientist //Many thanks to iopietro!
                     Destroy(this);
                 }
                 else
-                {
                     KillMajorScientist();
-                    Destroy(this);
-                }
             }
         }
 
         public void OnCheckRoundEnd(ref CheckRoundEndEvent ev) //If roundcontinue is true, it will prevent from MTF losing the round even if there is alive major scientist.
         {
-            pList = Player.GetHubs().Where(x => x.queryProcessor.PlayerId != ms?.queryProcessor.PlayerId).Select(x => Player.GetTeam(x)).ToList();
+            foreach (ReferenceHub player in Player.GetHubs())
+            {
+                if (player != ms)
+                    pList.Add(player.GetTeam());
+            }
 
             if (ms.GetRole() == RoleType.Scientist && !pList.Contains(Team.CDP) && !pList.Contains(Team.SCP) && !pList.Contains(Team.CHI) && !pList.Contains(Team.TUT) && Configs.roundcontinue)
                 ev.Allow = false;
@@ -61,12 +66,14 @@ namespace MajorScientist //Many thanks to iopietro!
 
         public void OnPlayerLeave(PlayerLeaveEvent ev)
         {
-            KillMajorScientist();
+            if(ev.Player == ms)
+                KillMajorScientist();
         }
 
         public void OnUseMedicalItem(MedicalItemEvent ev)
         {
-            ms.playerStats.maxHP = Configs.health;
+            if(ev.Player == ms)
+                ms.playerStats.maxHP = Configs.health;
         }
 
 
