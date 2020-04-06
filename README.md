@@ -34,7 +34,7 @@ Although it supports dynamic update from v1.4, there's something you should mind
 | ms_spawn_string | String |  | String will be displayed when someone spawn as a major scientist. It has default value, but you can customize it too. You can use <color="yellow"></color>, etc. |
 | ms_use_dm | Bool | false | String will be displayed to every player when a major scientist dies. |
 | ms_death_message | String |  | This string will be displayed when ms_use_dm is set to true. It has default value, but you can customize it too. You can use <color="yellow"></color>, etc. |
-| ms_use_em | Bool | true | If true, the plugin will display which SCPs were in game, who killed SCP, and who escaped at the end of the round. This is not related to major scientist itself, it is optional function. Remember - using 'reloadplugins' during the round will lose some informations in that round. |
+| ms_use_em | Bool | true | If true, the plugin will display which SCPs were in game, who killed SCP, and who escaped at the end of the round. This is not related to major scientist itself, it is optional function. <b>Remember</b> - using 'reloadplugins' during the round will lose some informations in that round. |
 
 
 
