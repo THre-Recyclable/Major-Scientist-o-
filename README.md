@@ -28,7 +28,7 @@ Although it supports dynamic update from v1.4, there's something you should mind
 | ms_use_207 | Bool | true | Should major scientist use SCP-207 effect on round start. |
 | ms_round_continue | Bool | true | If this is set to true, the round won't end if the major scientist is alive. |
 | ms_vip | Bool | true | If this is set to true, MTF can't win if the major scientist has died. |
-| ms_ammo_box | String | 150:150:150 | The amount of ammo the major scientist has on round start. It should be a form of int:int:int. |
+| ms_ammo_box | String | 150:150:150 | The amount of ammo the major scientist has on round start. It should be a form of int:int:int(5.56:7.62:9mm)|
 | ms_badge | String | Major Scientist | Name of badge. |
 | ms_replace_string | String |  | String will be displayed when some class-D is replaced with major scientist. It has default value, but you can customize it too. You can use <color="yellow"></color>, etc. |
 | ms_spawn_string | String |  | String will be displayed when someone spawn as a major scientist. It has default value, but you can customize it too. You can use <color="yellow"></color>, etc. |
