@@ -36,8 +36,6 @@ namespace MajorScientist
 		{
 			ms = null;
 
-			Log.Info("Test1");
-
 			scpnamestring = null;
 			killerstring = null;
 			escaperstring = null;
@@ -58,7 +56,7 @@ namespace MajorScientist
 
 		public void OnRoundEnd()
 		{
-			if (scpnamestring == null) scpnamestring = "None ";
+			if (scpnamestring == null) scpnamestring = "No SCPs detected ";
 			if (killerstring == null) killerstring = "None ";
 			if (escaperstring == null) escaperstring = "None ";
 
@@ -68,10 +66,8 @@ namespace MajorScientist
 
 		public void OnSetClass(SetClassEvent ev) 
 		{
-			
-
 			if (ev.Player.GetTeam() == Team.SCP && ev.Player.GetRole() != RoleType.Scp0492) // get scp's roles except 0492
-				nameset(ev.Player, ref scpnamestring);
+				scpnamestring = nameset(ev.Player);
 		}
 
 		public void OnCheckEscape(ref CheckEscapeEvent ev) //(while msvip is true) if ms has died, escaping is replaced with just changing roles. It won't increase escaped scientists count.
@@ -103,6 +99,7 @@ namespace MajorScientist
 		public void OnPlayerDie(ref PlayerDeathEvent ev) //when scp dies, write killer's nickname in the string
 		{
 			if (ev.Player.GetTeam() == Team.SCP && ev.Player.GetRole() != RoleType.Scp0492 && ev.Player.GetRole() != RoleType.Scp079 && ev.Killer != null && Configs.endmessage)
+				if(ev.Player != ev.Killer) // merge it only when it is not suicide.
 				killerstring += $"{ev.Killer.GetNickname()} ";
 		}
 
@@ -113,8 +110,9 @@ namespace MajorScientist
 			x();
 		}
 
-		public static void nameset(ReferenceHub scpplayer, ref string scpnamestring) //make merged string according to the SCP's role
+		public static string nameset(ReferenceHub scpplayer) //make merged string according to the SCP's role
 		{
+			string scpnamestring = "";
 			switch (scpplayer.GetRole())
 			{
 				case RoleType.Scp049:
@@ -139,6 +137,8 @@ namespace MajorScientist
 					scpnamestring += "SCP-939-89 ";
 					break;
 			}
+
+			return scpnamestring;
 		}
 
 		public static List<ReferenceHub> GetHubList(RoleType role)

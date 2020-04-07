@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MajorScientist</RootNamespace>
-    <AssemblyName>MajorScientist%28o%29 v1.4.2</AssemblyName>
+    <AssemblyName>MajorScientist%28o%29 v1.4.3</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

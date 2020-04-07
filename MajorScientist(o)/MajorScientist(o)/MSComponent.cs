@@ -14,8 +14,8 @@ namespace MajorScientist //Many thanks to iopietro!
 
 		private static bool isHidden;
 		private static bool hasTag;
-        private static string PrevBadgeText = "";
-        private static string PrevBadgeColor = "";
+        private static string PrevBadgeText;
+        private static string PrevBadgeColor;
 
         private static List<Team> pList;
 
@@ -58,13 +58,9 @@ namespace MajorScientist //Many thanks to iopietro!
 
         public void OnCheckRoundEnd(ref CheckRoundEndEvent ev) //If roundcontinue is true, it will prevent from MTF losing the round even if there is alive major scientist.
         {
-            foreach (ReferenceHub player in Player.GetHubs())
-            {
-                if (player != ms)
-                    pList.Add(player.GetTeam());
-            }
+            pList = GetTeamList();
 
-            if (ms.GetRole() == RoleType.Scientist && !pList.Contains(Team.CDP) && !pList.Contains(Team.SCP) && !pList.Contains(Team.CHI) && !pList.Contains(Team.TUT) && Configs.roundcontinue)
+            if (ms.GetRole() == RoleType.Scientist && !pList.Contains(Team.CDP) && !pList.Contains(Team.SCP) && !pList.Contains(Team.CHI) && Configs.roundcontinue)
                 ev.Allow = false;
         }
 
@@ -147,6 +143,19 @@ namespace MajorScientist //Many thanks to iopietro!
         {
             ms.serverRoles.NetworkMyText = text;
             ms.serverRoles.NetworkMyColor = color;
+        }
+
+        public List<Team> GetTeamList()
+        {
+            List<Team> pList = new List<Team>();
+
+            foreach(ReferenceHub player in Player.GetHubs())
+            {
+                if (player != ms)
+                    pList.Add(player.GetTeam());
+            }
+
+            return pList;
         }
 
 
