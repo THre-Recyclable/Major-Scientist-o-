@@ -60,13 +60,14 @@ namespace MajorScientist
 			if (killerstring == null) killerstring = "None ";
 			if (escaperstring == null) escaperstring = "None ";
 
-			Timing.CallDelayed(0.3f, () => Map.Broadcast($"<size=30>[ <color=\"red\">SCP</color>: {scpnamestring}] [ <color=\"cyan\">SCP Killer</color>:{killerstring}]</size>\n<size=25>[ <color=\"orange\">Escaped</color>: {escaperstring} ]</size>", 15));
+			if(Configs.endmessage)
+				Timing.CallDelayed(0.3f, () => Map.Broadcast($"<size=30>[ <color=\"red\">SCP</color>: {scpnamestring}] [ <color=\"cyan\">SCP Killer</color>:{killerstring}]</size>\n<size=25>[ <color=\"orange\">Escaped</color>: {escaperstring} ]</size>", 15));
 			mslist = null;
 		}
 
 		public void OnSetClass(SetClassEvent ev) 
 		{
-			if (ev.Player.GetTeam() == Team.SCP && ev.Player.GetRole() != RoleType.Scp0492) // get scp's roles except 0492
+			if (ev.Player.GetTeam() == Team.SCP && ev.Player.GetRole() != RoleType.Scp0492 && Configs.endmessage) // get scp's roles except 0492
 				scpnamestring = nameset(ev.Player);
 		}
 
