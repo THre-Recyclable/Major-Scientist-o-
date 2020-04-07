@@ -14,6 +14,8 @@ namespace MajorScientist //Many thanks to iopietro!
 
 		private static bool isHidden;
 		private static bool hasTag;
+        private static string PrevBadgeText;
+        private static string PrevBadgeColor;
 
         private static List<Team> pList;
 
@@ -22,6 +24,8 @@ namespace MajorScientist //Many thanks to iopietro!
             ms = this.gameObject.GetPlayer();
             EventHandlers.MSalive = true;
             pList = null;
+            PrevBadgeText = ms.GetRank()?.BadgeText;
+            PrevBadgeColor = ms.GetRank()?.BadgeColor;
             HookEvents();
         }
 
@@ -39,7 +43,7 @@ namespace MajorScientist //Many thanks to iopietro!
             {
                 if (ms.GetRole() == RoleType.NtfScientist) // NtfScientist means ms has escaped, so it should do different work.
                 {
-                    Extensions.RemoveBadge(ms);
+                    Setbadge(PrevBadgeText, PrevBadgeColor);
 
                     if (Configs.log)
                         Log.Info("Major Scientist has escaped.");
@@ -82,7 +86,8 @@ namespace MajorScientist //Many thanks to iopietro!
             if (Configs.msvip)
                 RoundSummary.escaped_scientists = 0;
 
-            Extensions.RemoveBadge(ms);
+            Setbadge(PrevBadgeText, PrevBadgeColor);
+
             EventHandlers.MSalive = false;
 
             if (Configs.log)
@@ -123,20 +128,28 @@ namespace MajorScientist //Many thanks to iopietro!
                 MS.playerStats.health = Configs.health;
 
                 if (Configs.dsreplace)
-                    MS.Broadcast(Configs.replacestring, 10);
+                    MS.Broadcast(10, Configs.replacestring, false);
                 else
-                    MS.Broadcast(Configs.spawnmsstring, 10);
+                    MS.Broadcast(10, Configs.spawnmsstring, false);
 
                 hasTag = !string.IsNullOrEmpty(MS.serverRoles.NetworkMyText);
                 isHidden = !string.IsNullOrEmpty(MS.serverRoles.HiddenBadge);
                 if (isHidden) MS.RefreshTag();
-                Timing.CallDelayed(0.5f, () => MS.SetRank(Configs.badge, "yellow"));
+                Timing.CallDelayed(0.5f, () => Setbadge(Configs.badge, "yellow"));
                 Timing.CallDelayed(0.5f, () => MS.ammoBox.Networkamount = Configs.ammobox);
 
                 if (Configs.usescp207)
                     Timing.CallDelayed(0.5f, () => MS.effectsController.EnableEffect("SCP-207"));
             }
         }
+
+        public void Setbadge(string text, string color)
+        {
+            ms.serverRoles.NetworkMyText = text;
+            ms.serverRoles.NetworkMyColor = color;
+        }
+
+
     }
 }
 

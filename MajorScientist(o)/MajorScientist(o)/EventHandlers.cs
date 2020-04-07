@@ -45,12 +45,12 @@ namespace MajorScientist
 			if (rand.Next(1, 101) <= Configs.spawnchance)
 			{
 				if (!Configs.dsreplace)
-					Timing.CallDelayed(0.4f, () => mslist = GetHubList(RoleType.Scientist));
+					Timing.CallDelayed(0.2f, () => mslist = GetHubList(RoleType.Scientist));
 				else
-					Timing.CallDelayed(0.4f, () => mslist = GetHubList(RoleType.ClassD));
-				Timing.CallDelayed(0.6f, () => ms = mslist[rand.Next(mslist.Count)]);
-				Timing.CallDelayed(0.8f, () => ms.ChangeRole(RoleType.Scientist));
-				Timing.CallDelayed(1.0f, () => ms.gameObject.AddComponent<MSComponent>());
+					Timing.CallDelayed(0.2f, () => mslist = GetHubList(RoleType.ClassD));
+				Timing.CallDelayed(0.4f, () => ms = mslist[rand.Next(mslist.Count)]);
+				Timing.CallDelayed(0.5f, () => ms.ChangeRole(RoleType.Scientist));
+				Timing.CallDelayed(0.7f, () => ms.gameObject.AddComponent<MSComponent>());
 			}
 
             
@@ -144,11 +144,9 @@ namespace MajorScientist
 		public static List<ReferenceHub> GetHubList(RoleType role)
 		{
 			List<ReferenceHub> mslist = new List<ReferenceHub>();
-			foreach (ReferenceHub player in Player.GetHubs())
-			{
-				if (player.GetRole() == role)
+			foreach (ReferenceHub player in role.GetHubs())
 					mslist.Add(player);
-			}
+
 			return mslist;
 		}
 	}

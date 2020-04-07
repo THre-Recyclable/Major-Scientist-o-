@@ -8,11 +8,6 @@ namespace MajorScientist
 	public static class Extensions
 	{
 
-		public static void SetRank(this ReferenceHub player, string rank, string color = "default")
-		{
-			player.serverRoles.NetworkMyText = rank;
-			player.serverRoles.NetworkMyColor = color;
-		}
 		public static void ChangeRole(this ReferenceHub player, RoleType role, bool spawnTeleport = true)
 		{
 			if (!spawnTeleport)
@@ -34,32 +29,6 @@ namespace MajorScientist
 			player.serverRoles.RpcResetFixed();
 			player.serverRoles.RefreshPermissions(true);
 		}
-
-		public static void HideTag(this ReferenceHub player)
-		{
-			player.serverRoles.HiddenBadge = player.serverRoles.MyText;
-			player.serverRoles.NetworkGlobalBadge = null;
-			player.serverRoles.SetText(null);
-			player.serverRoles.SetColor(null);
-			player.serverRoles.GlobalSet = false;
-			player.serverRoles.RefreshHiddenTag();
-		}
-
-		public static void RemoveBadge(ReferenceHub ms)
-		{
-			bool hasTag = !string.IsNullOrEmpty(ms.serverRoles.NetworkMyText);
-			bool isHidden = !string.IsNullOrEmpty(ms.serverRoles.HiddenBadge);
-
-			ms.SetRank("", "default");
-			if (hasTag) ms.RefreshTag();
-			if (isHidden) ms.HideTag();
-		}
-
-		public static void Broadcast(this ReferenceHub player, string message, uint time, bool monospaced = false)
-		{
-			player.GetComponent<Broadcast>().TargetAddElement(player.scp079PlayerScript.connectionToClient, message, time, monospaced);
-		}
-
 
 	}
 }
