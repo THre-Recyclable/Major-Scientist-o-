@@ -14,8 +14,8 @@ namespace MajorScientist //Many thanks to iopietro!
 
 		private static bool isHidden;
 		private static bool hasTag;
-        private static string PrevBadgeText;
-        private static string PrevBadgeColor;
+        private static string PrevBadgeText = "";
+        private static string PrevBadgeColor = "";
 
         private static List<Team> pList;
 
