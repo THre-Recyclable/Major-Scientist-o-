@@ -36,7 +36,6 @@ namespace MajorScientist
             Events.RoundEndEvent += EventHandlers.OnRoundEnd;
             Events.PlayerDeathEvent += EventHandlers.OnPlayerDie;
 			Events.CheckEscapeEvent += EventHandlers.OnCheckEscape;
-			Events.SetClassEvent += EventHandlers.OnSetClass;
 
 		}
 
@@ -48,7 +47,6 @@ namespace MajorScientist
 			Events.RoundEndEvent -= EventHandlers.OnRoundEnd;
 			Events.PlayerDeathEvent -= EventHandlers.OnPlayerDie;
 			Events.CheckEscapeEvent -= EventHandlers.OnCheckEscape;
-			Events.SetClassEvent -= EventHandlers.OnSetClass;
 
 			harmonyInstance.UnpatchAll();
 			EventHandlers = null;

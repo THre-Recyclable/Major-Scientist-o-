@@ -2,6 +2,8 @@
 using MEC;
 using UnityEngine;
 using System;
+using EXILED;
+using EXILED.Extensions;
 
 namespace MajorScientist
 {

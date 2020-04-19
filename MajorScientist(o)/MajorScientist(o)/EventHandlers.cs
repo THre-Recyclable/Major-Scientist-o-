@@ -14,13 +14,13 @@ namespace MajorScientist
 		public Plugin plugin;
 		public EventHandlers(Plugin plugin) => this.plugin = plugin;
 		public static bool MSalive = true;
+		public static string scpnamestring;
 
 		private static System.Random rand = new System.Random();
 
 		internal static ReferenceHub ms;
 		private static List<ReferenceHub> mslist;
 
-		private static string scpnamestring;
 		private static string killerstring;
 		public static string escaperstring;
 
@@ -35,10 +35,10 @@ namespace MajorScientist
 		public void OnRoundStart()
 		{
 			ms = null;
-
-			scpnamestring = null;
-			killerstring = null;
-			escaperstring = null;
+			MSalive = true;
+			scpnamestring = "";
+			killerstring = "";
+			escaperstring = "";
 
 			if (rand.Next(1, 101) <= Configs.spawnchance)
 			{
@@ -51,24 +51,18 @@ namespace MajorScientist
 				Timing.CallDelayed(0.7f, () => ms.gameObject.AddComponent<MSComponent>());
 			}
 
-            
+			if (Configs.endmessage)
+				Timing.CallDelayed(0.5f, () => AddKCComponent());
 		}
 
 		public void OnRoundEnd()
 		{
-			if (scpnamestring == null) scpnamestring = "No SCPs detected ";
 			if (killerstring == null) killerstring = "None ";
 			if (escaperstring == null) escaperstring = "None ";
 
 			if(Configs.endmessage)
-				Timing.CallDelayed(0.3f, () => Map.Broadcast($"<size=30>[ <color=\"red\">SCP</color>: {scpnamestring}] [ <color=\"cyan\">SCP Killer</color>:{killerstring}]</size>\n<size=25>[ <color=\"orange\">Escaped</color>: {escaperstring} ]</size>", 15));
+				Timing.CallDelayed(1.5f, () => Map.Broadcast($"<size=30>[ <color=\"red\">SCP</color>: {scpnamestring}] [ <color=\"cyan\">SCP Killer</color>:{killerstring}]</size>\n<size=25>[ <color=\"orange\">Escaped</color>: {escaperstring} ]</size>", 15));
 			mslist = null;
-		}
-
-		public void OnSetClass(SetClassEvent ev) 
-		{
-			if (ev.Player.GetTeam() == Team.SCP && ev.Player.GetRole() != RoleType.Scp0492 && Configs.endmessage) // get scp's roles except 0492
-				scpnamestring = nameset(ev.Player);
 		}
 
 		public void OnCheckEscape(ref CheckEscapeEvent ev) //(while msvip is true) if ms has died, escaping is replaced with just changing roles. It won't increase escaped scientists count.
@@ -85,14 +79,16 @@ namespace MajorScientist
 					List<int> SCitems = new List<int>() { 7, 12, 14, 19, 20, 25 };
 					for (int i = 0; i < SCitems.Count; i++)
 						ev.Player.inventory.AddNewItem((ItemType)SCitems[i]);
+					ev.Player.playerStats.health = ev.Player.playerStats.maxHP;
 				}
 				else if (ev.Player.GetRole() == RoleType.ClassD && ev.Player.IsHandCuffed() == true)
 				{
 					ev.Allow = false;
 					ev.Player.ChangeRole(RoleType.NtfCadet);
-					List<int> CDitems = new List<int>() { 5, 12, 14, 19, 21, 26 };
+					List<int> CDitems = new List<int>() { 5, 12, 14, 19, 21};
 					for (int i = 0; i < CDitems.Count; i++)
 						ev.Player.inventory.AddNewItem((ItemType)CDitems[i]);
+					ev.Player.playerStats.health = ev.Player.playerStats.maxHP;
 				}
 			}
 		}
@@ -111,37 +107,6 @@ namespace MajorScientist
 			x();
 		}
 
-		public static string nameset(ReferenceHub scpplayer) //make merged string according to the SCP's role
-		{
-			string scpnamestring = "";
-			switch (scpplayer.GetRole())
-			{
-				case RoleType.Scp049:
-					scpnamestring += "SCP-049 ";
-					break;
-				case RoleType.Scp079:
-					scpnamestring += "SCP-079 ";
-					break;
-				case RoleType.Scp096:
-					scpnamestring += "SCP-096 ";
-					break;
-				case RoleType.Scp106:
-					scpnamestring += "SCP-106 ";
-					break;
-				case RoleType.Scp173:
-					scpnamestring += "SCP-173 ";
-					break;
-				case RoleType.Scp93953:
-					scpnamestring += "SCP-939-53 ";
-					break;
-				case RoleType.Scp93989:
-					scpnamestring += "SCP-939-89 ";
-					break;
-			}
-
-			return scpnamestring;
-		}
-
 		public static List<ReferenceHub> GetHubList(RoleType role)
 		{
 			List<ReferenceHub> mslist = new List<ReferenceHub>();
@@ -149,6 +114,16 @@ namespace MajorScientist
 					mslist.Add(player);
 
 			return mslist;
+		}
+
+		public static void AddKCComponent()
+		{
+			foreach(ReferenceHub player in Team.SCP.GetHubs())
+			{
+				if (player.TryGetComponent(out KillCountComponent killcountcomponent)) killcountcomponent.KCDestroy();
+
+				player.gameObject.AddComponent<KillCountComponent>();
+			}
 		}
 	}
 }
