@@ -37,9 +37,7 @@ Although it supports dynamic update from v1.4, there's something you should mind
 | ms_use_em | Bool | true | If true, the plugin will display which SCPs were in game, who killed SCP, and who escaped at the end of the round. This is not related to major scientist itself, it is optional function. <b>Remember</b> - using 'reloadplugins' during the round will lose some informations in that round. |
 
 
-# Further updates has been delayed(written on April 29)
-
-I must join the army at May 4(damn conscription, Korea still has this shit). So I can't update this anymore.
+# Further updates has been delayed(written on 2020 April 29)
 
 
 
